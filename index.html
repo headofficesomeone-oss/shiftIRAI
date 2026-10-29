@@ -294,15 +294,21 @@ const reporterInput = document.getElementById('reporter');
 const MAX_ITEMS = 50;
 let submitted = false;
 
-// 報告者を同じタブ内で保持
+/************************************
+ * 報告者名の保存・復元
+ * ブラウザを閉じても保持する
+ ************************************/
+
+// 保存されている報告者名を取得
 try {
   reporterInput.value =
-    sessionStorage.getItem('gShiftReporter') || '';
+    localStorage.getItem('gShiftReporter') || '';
 } catch (err) {}
 
+// 報告者名が変更されたら保存
 reporterInput.addEventListener('input', () => {
   try {
-    sessionStorage.setItem(
+    localStorage.setItem(
       'gShiftReporter',
       reporterInput.value
     );
@@ -511,7 +517,7 @@ form.addEventListener('submit', function(e) {
     crypto.randomUUID();
 
   try {
-    sessionStorage.setItem(
+    localStorage.setItem(
       'gShiftReporter',
       reporterInput.value
     );
