@@ -3,8 +3,7 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8">
-<meta name="viewport"
-      content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Gシフト依頼</title>
 
 <style>
@@ -45,7 +44,8 @@ input, select, textarea {
   font: inherit;
   font-size: 16px;
 }
-input[type="date"], input[type="time"] {
+input[type="date"],
+input[type="time"] {
   min-width: 0;
   color-scheme: light;
 }
@@ -74,10 +74,8 @@ input[type="date"], input[type="time"] {
   align-items: center;
   margin: 10px 0;
 }
-.date-entry input {
-  flex: 1;
-  min-width: 0;
-}
+.date-entry input { flex: 1; min-width: 0; }
+
 .time-entry {
   border: 1px solid #d5dce8;
   border-radius: 10px;
@@ -90,8 +88,6 @@ input[type="date"], input[type="time"] {
   align-items: center;
   gap: 10px;
 }
-.time-entry label { font-size: .93rem; }
-
 button {
   border: 0;
   border-radius: 9px;
@@ -102,31 +98,24 @@ button {
   cursor: pointer;
   touch-action: manipulation;
 }
-button:disabled {
-  opacity: .48;
-  cursor: not-allowed;
-}
+button:disabled { opacity: .48; cursor: not-allowed; }
+
 .add-btn {
+  width: 100%;
+  margin-top: 8px;
   background: #e8f0fc;
   border: 1px solid #94b6e5;
   color: #1959aa;
-  width: 100%;
-  margin-top: 8px;
 }
 .delete-btn {
   background: #b53b3b;
   color: white;
   min-width: 65px;
 }
-.time-delete {
-  min-width: 65px;
-  min-height: 42px;
-  font-size: .9rem;
-}
 .mode-help {
   color: #64748b;
   font-size: .85rem;
-  margin: 7px 0;
+  line-height: 1.5;
 }
 .summary {
   background: #f1f5f9;
@@ -139,35 +128,40 @@ button:disabled {
   position: sticky;
   bottom: 0;
   background: white;
-  padding: 10px 0 max(12px, env(safe-area-inset-bottom));
+  padding: 10px 0 max(12px,env(safe-area-inset-bottom));
   border-top: 1px solid #e2e7ef;
   margin-top: 20px;
   z-index: 5;
 }
 #submitBtn {
   width: 100%;
+  min-height: 58px;
   background: #1959aa;
   color: white;
-  min-height: 58px;
   font-size: 1.08rem;
 }
 #newBtn {
+  display: none;
   width: 100%;
+  min-height: 58px;
   background: #15803d;
   color: white;
-  display: none;
   margin-top: 12px;
+  font-size: 1.05rem;
 }
 #status {
-  font-weight: 600;
+  margin-top: 14px;
+  padding: 12px;
+  background: #eff6ff;
+  border-radius: 8px;
   line-height: 1.6;
-  margin-top: 12px;
+  display: none;
 }
 @media(max-width:500px) {
   main {
     margin: 0;
-    min-height: 100vh;
     padding: 16px;
+    min-height: 100vh;
     border-radius: 0;
     box-shadow: none;
   }
@@ -175,7 +169,6 @@ button:disabled {
     grid-template-columns: 1fr;
     gap: 0;
   }
-  .time-entry { padding: 12px; }
 }
 </style>
 </head>
@@ -195,12 +188,13 @@ button:disabled {
   <div>
     <label for="reporter">報告者 *</label>
     <input id="reporter" name="reporter"
-           maxlength="100" required>
+           required maxlength="100"
+           autocomplete="name">
   </div>
   <div>
     <label for="client">利用者 *</label>
     <input id="client" name="client"
-           maxlength="100" required>
+           required maxlength="100">
   </div>
 </div>
 
@@ -225,7 +219,9 @@ button:disabled {
     <h2>日時（支援予定日） *</h2>
     <span id="dateCount" class="count"></span>
   </div>
+
   <div id="dateList"></div>
+
   <button type="button" id="addDate" class="add-btn">
     ＋ 日付を追加
   </button>
@@ -237,7 +233,9 @@ button:disabled {
     <h2>時間帯</h2>
     <span id="timeCount" class="count"></span>
   </div>
+
   <div id="timeList"></div>
+
   <button type="button" id="addTime" class="add-btn">
     ＋ 時間を追加
   </button>
@@ -245,23 +243,18 @@ button:disabled {
 </section>
 
 <label for="destination">行き先場所</label>
-<input id="destination" name="destination"
-       maxlength="500">
+<input id="destination" name="destination" maxlength="500">
 
 <label for="meeting">待合せ場所</label>
-<input id="meeting" name="meeting"
-       maxlength="500">
+<input id="meeting" name="meeting" maxlength="500">
 
-<label for="notes">特記事項（介護保険の場合は必ずサービスの内訳（身体１生活１など）を記入する事</label>
+<label for="notes">特記事項（訪問介護の場合は身体生活の内訳、待合せや受診の予約時間を記入）</label>
 <textarea id="notes" name="notes"
           rows="3" maxlength="2000"></textarea>
 
-<input type="hidden" id="supportDates"
-       name="supportDates">
-<input type="hidden" id="supportTimes"
-       name="supportTimes">
-<input type="hidden" id="requestId"
-       name="requestId">
+<input type="hidden" id="supportDates" name="supportDates">
+<input type="hidden" id="supportTimes" name="supportTimes">
+<input type="hidden" id="requestId" name="requestId">
 
 <div class="summary">
   <strong>登録内容</strong>
@@ -278,15 +271,13 @@ button:disabled {
 <div id="status" role="status"></div>
 
 <button type="button" id="newBtn">
-  ＋ 新しい依頼を入力
+  ＋ 次の依頼を入力
 </button>
 
 <p class="help">
 登録結果は別タブで表示されます。<br>
-「登録しました」と表示されたことを
-確認してください。
+「登録しました」と表示されたことを確認してください。
 </p>
-
 </main>
 
 <script>
@@ -298,9 +289,25 @@ const addTimeBtn = document.getElementById('addTime');
 const submitBtn = document.getElementById('submitBtn');
 const newBtn = document.getElementById('newBtn');
 const statusBox = document.getElementById('status');
+const reporterInput = document.getElementById('reporter');
 
 const MAX_ITEMS = 50;
 let submitted = false;
+
+// 報告者を同じタブ内で保持
+try {
+  reporterInput.value =
+    sessionStorage.getItem('gShiftReporter') || '';
+} catch (err) {}
+
+reporterInput.addEventListener('input', () => {
+  try {
+    sessionStorage.setItem(
+      'gShiftReporter',
+      reporterInput.value
+    );
+  } catch (err) {}
+});
 
 function todayString() {
   const d = new Date();
@@ -312,54 +319,44 @@ function todayString() {
 }
 
 function dateInputs() {
-  return [...dateList.querySelectorAll('input[type="date"]')];
+  return [...dateList.querySelectorAll('input[type=date]')];
 }
+
 function timeEntries() {
   return [...timeList.querySelectorAll('.time-entry')];
 }
-function isLocked() {
-  return submitted;
-}
 
-// 件数と追加ボタンの制御
 function updateControls() {
   const dc = dateInputs().length;
   const tc = timeEntries().length;
 
-  document.getElementById('dateCount').textContent =
-    dc + '件';
-  document.getElementById('timeCount').textContent =
-    tc + '件';
+  document.getElementById('dateCount').textContent = dc + '件';
+  document.getElementById('timeCount').textContent = tc + '件';
 
-  addDateBtn.disabled =
-    submitted || tc > 1 || dc >= MAX_ITEMS;
-  addTimeBtn.disabled =
-    submitted || dc > 1 || tc >= MAX_ITEMS;
+  addDateBtn.disabled = submitted || tc > 1 || dc >= MAX_ITEMS;
+  addTimeBtn.disabled = submitted || dc > 1 || tc >= MAX_ITEMS;
 
   document.getElementById('dateHelp').textContent =
     tc > 1
-      ? '時間帯が複数のため、日付は追加できません。'
+      ? '時間帯が複数なので、日付は追加できません。'
       : '複数の日付に同じ時間帯を登録できます。';
 
   document.getElementById('timeHelp').textContent =
     dc > 1
-      ? '日付が複数のため、時間帯は追加できません。'
+      ? '日付が複数なので、時間は追加できません。'
       : '同じ日付に複数の時間帯を登録できます。';
 
-  const count = Math.max(dc, tc);
-  const mode = dc > 1
-    ? '日付ごとに同じ時間帯'
-    : tc > 1
-      ? '同じ日付で複数の時間帯'
-      : '日付1件・時間帯1件';
-
   document.getElementById('summaryText').textContent =
-    mode + '／登録予定 ' + count + '行';
+    (dc > 1
+      ? '日付を複数指定'
+      : tc > 1
+        ? '時間帯を複数指定'
+        : '日付1件・時間帯1件') +
+    '／登録予定 ' + Math.max(dc, tc) + '行';
 }
 
-// 日付欄を追加
 function addDate(value = '') {
-  if (isLocked() ||
+  if (submitted ||
       timeEntries().length > 1 ||
       dateInputs().length >= MAX_ITEMS) return;
 
@@ -371,17 +368,15 @@ function addDate(value = '') {
   inp.required = true;
   inp.value = value;
   inp.setAttribute('aria-label', '支援予定日');
-  inp.addEventListener('change', updateControls);
   wrapper.appendChild(inp);
 
-  if (dateInputs().length >= 1) {
+  if (dateInputs().length > 0) {
     const remove = document.createElement('button');
     remove.type = 'button';
     remove.textContent = '削除';
     remove.className = 'delete-btn';
 
     remove.addEventListener('click', () => {
-      if (isLocked()) return;
       wrapper.remove();
       updateControls();
     });
@@ -392,9 +387,8 @@ function addDate(value = '') {
   updateControls();
 }
 
-// 時間帯を追加
 function addTime(start = '', end = '') {
-  if (isLocked() ||
+  if (submitted ||
       dateInputs().length > 1 ||
       timeEntries().length >= MAX_ITEMS) return;
 
@@ -405,24 +399,23 @@ function addTime(start = '', end = '') {
   header.className = 'time-header';
 
   const heading = document.createElement('strong');
-  heading.textContent =
-    '時間帯 ' + (timeEntries().length + 1);
+  heading.textContent = '時間帯 ' + (timeEntries().length + 1);
   header.appendChild(heading);
 
-  if (timeEntries().length >= 1) {
+  if (timeEntries().length > 0) {
     const remove = document.createElement('button');
     remove.type = 'button';
     remove.textContent = '削除';
-    remove.className = 'delete-btn time-delete';
+    remove.className = 'delete-btn';
 
     remove.addEventListener('click', () => {
-      if (isLocked()) return;
       wrapper.remove();
       renumberTimes();
       updateControls();
     });
     header.appendChild(remove);
   }
+
   wrapper.appendChild(header);
 
   const fields = document.createElement('div');
@@ -450,6 +443,7 @@ function addTime(start = '', end = '') {
   fields.append(startBox, endBox);
   wrapper.appendChild(fields);
   timeList.appendChild(wrapper);
+
   updateControls();
 }
 
@@ -460,18 +454,14 @@ function renumberTimes() {
   });
 }
 
-addDateBtn.addEventListener('click', () => {
-  addDate();
-});
-addTimeBtn.addEventListener('click', () => {
-  addTime();
-});
+addDateBtn.addEventListener('click', () => addDate());
+addTimeBtn.addEventListener('click', () => addTime());
 
-// 初期状態
+// 初期入力欄
 addDate(todayString());
 addTime();
 
-// 送信
+// 登録ボタン
 form.addEventListener('submit', function(e) {
   if (submitted) {
     e.preventDefault();
@@ -484,10 +474,11 @@ form.addEventListener('submit', function(e) {
     end: entry.querySelector('.end-time').value
   }));
 
-  if (dates.some(x => !x) ||
+  if (!dates.length ||
+      dates.some(x => !x) ||
       new Set(dates).size !== dates.length) {
     e.preventDefault();
-    alert('日付の未入力や重複を確認してください。');
+    alert('日付の未入力または重複を確認してください。');
     return;
   }
 
@@ -498,33 +489,16 @@ form.addEventListener('submit', function(e) {
   }
 
   for (const t of times) {
-    if (!t.start) {
+    if (!t.start || (t.end && t.end <= t.start)) {
       e.preventDefault();
-      alert('開始時刻を入力してください。');
-      return;
-    }
-    if (t.end && t.end <= t.start) {
-      e.preventDefault();
-      alert('終了予定は開始時刻より後にしてください。');
+      alert('時間帯の入力を確認してください。');
       return;
     }
   }
 
   const count = Math.max(dates.length, times.length);
-  if (count > MAX_ITEMS) {
-    e.preventDefault();
-    alert('最大50件まで登録できます。');
-    return;
-  }
 
-  const message =
-    count + '件の依頼を登録します。\n\n' +
-    '報告者：' + form.elements.reporter.value + '\n' +
-    '利用者：' + form.elements.client.value + '\n' +
-    '区分：' + form.elements.category.value + '\n\n' +
-    'よろしいですか？';
-
-  if (!confirm(message)) {
+  if (!confirm(count + '件の依頼を登録します。よろしいですか？')) {
     e.preventDefault();
     return;
   }
@@ -533,58 +507,87 @@ form.addEventListener('submit', function(e) {
     JSON.stringify(dates);
   document.getElementById('supportTimes').value =
     JSON.stringify(times);
+  document.getElementById('requestId').value =
+    crypto.randomUUID();
 
-  const requestId = document.getElementById('requestId');
-  if (!requestId.value) {
-    requestId.value = crypto.randomUUID();
-  }
+  try {
+    sessionStorage.setItem(
+      'gShiftReporter',
+      reporterInput.value
+    );
+  } catch (err) {}
 
   submitted = true;
-  updateControls();
 
-  // 標準フォーム送信を開始した後に画面をロック
+  // 標準のフォームPOST送信を妨げないよう、
+  // 送信開始後にボタンをロックする
   setTimeout(() => {
-    form.querySelectorAll('input,select,textarea')
-      .forEach(el => {
-        if (el.type !== 'hidden') el.readOnly =
-          el.tagName !== 'SELECT';
-      });
     submitBtn.disabled = true;
     submitBtn.textContent = '送信済み';
-    newBtn.style.display = 'block';
+    updateControls();
+
+    statusBox.style.display = 'block';
     statusBox.textContent =
-      '別タブで登録結果を確認してください。';
+      '送信しました。別タブで登録結果を確認してください。';
+
+    // 次の依頼を入力する操作を表示
+    newBtn.style.display = 'block';
+
+    // ボタンが見えるように移動
+    newBtn.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center'
+    });
   }, 0);
 });
 
-// 新規入力
+// 次の依頼を入力
 newBtn.addEventListener('click', () => {
+
   if (!confirm(
     '別タブで登録結果を確認しましたか？\n' +
-    '新しい依頼の入力を開始します。'
-  )) return;
+    '次の依頼の入力を開始します。'
+  )) {
+    return;
+  }
 
+  // 報告者名を退避
+  const lastReporter = reporterInput.value;
+
+  // フォーム初期化
   form.reset();
+
+  // 報告者だけ復元
+  reporterInput.value = lastReporter;
+
+  // 日付・時間帯の入力欄を再作成
   dateList.replaceChildren();
   timeList.replaceChildren();
 
   submitted = false;
-  form.querySelectorAll('input,textarea')
-    .forEach(el => el.readOnly = false);
-
-  document.getElementById('supportDates').value = '';
-  document.getElementById('supportTimes').value = '';
-  document.getElementById('requestId').value = '';
 
   addDate(todayString());
   addTime();
 
+  // 送信管理項目を初期化
+  document.getElementById('supportDates').value = '';
+  document.getElementById('supportTimes').value = '';
+  document.getElementById('requestId').value = '';
+
   submitBtn.disabled = false;
   submitBtn.textContent = 'まとめて登録する';
+
   newBtn.style.display = 'none';
+  statusBox.style.display = 'none';
   statusBox.textContent = '';
 
-  window.scrollTo({top: 0, behavior: 'smooth'});
+  updateControls();
+
+  // 最初の入力欄へ戻る
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  });
 });
 </script>
 </body>
