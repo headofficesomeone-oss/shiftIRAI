@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>支援予定報告</title>
+  <style>
+    :root{font-family:system-ui,"Yu Gothic",sans-serif;color:#243047;background:#f4f6fa}
+    *{box-sizing:border-box}main{max-width:640px;margin:30px auto;padding:24px;background:#fff;border-radius:14px;box-shadow:0 3px 20px #18243c15}
+    h1{font-size:1.45rem;margin:0 0 8px}.help{color:#58647b;font-size:.9rem}label{display:block;margin:16px 0 5px;font-weight:600}
+    input,select,textarea{width:100%;padding:11px;border:1px solid #a6b0c0;border-radius:8px;font:inherit}
+    .two{display:grid;grid-template-columns:1fr 1fr;gap:14px}button{margin-top:22px;width:100%;border:0;border-radius:9px;background:#1959aa;color:#fff;font:inherit;font-weight:700;padding:14px;cursor:pointer}
+    .date-entry{display:flex;gap:10px;align-items:end;margin:9px 0}.date-entry input{flex:1;min-width:0}
+    .date-entry button{width:auto;margin:0;background:#a83636;padding:11px 14px;white-space:nowrap}
+    #addDate{background:#e8f0fc;color:#1959aa;border:1px solid #94b6e5;margin-top:9px}
+    input,select,textarea{font-size:16px;min-height:48px}
+    input[type="date"],input[type="time"]{min-width:0;max-width:100%;color-scheme:light}
+    button{min-height:50px;touch-action:manipulation}
+    .date-entry button{min-width:70px;min-height:48px}
+    .submit-wrap{position:sticky;bottom:0;background:#fff;padding:8px 0 max(10px,env(safe-area-inset-bottom));border-top:1px solid #e2e7ef;margin-top:20px;z-index:5}
+    .submit-wrap button{margin:0;min-height:56px;font-size:1.08rem}
+    .help{line-height:1.6}
+    @media(max-width:500px){main{margin:0;min-height:100vh;border-radius:0;padding:16px 16px 22px;box-shadow:none}.two{grid-template-columns:1fr;gap:0}h1{font-size:1.35rem}label{margin-top:15px}input,select,textarea{padding:12px} .date-entry{gap:8px}}
+    @media(prefers-reduced-motion:no-preference){input:focus,select:focus,textarea:focus{outline:2px solid #1959aa;outline-offset:1px}}
+  </style>
+</head>
+<body>
+<main>
+  <h1>支援予定報告</h1>
+  <p class="help">必須項目を入力し「登録する」を押してください。スマホから入力できます。登録結果は別タブに表示されます。</p>
+  <!-- Replace YOUR_DEPLOYED_GAS_WEB_APP_URL with the actual Apps Script /exec URL. -->
+  <form id="report" method="post" target="_blank" action="YOUR_DEPLOYED_GAS_WEB_APP_URL">
+    <div class="two">
+      <div><label for="reporter">報告者 *</label><input id="reporter" name="reporter" required maxlength="100" autocomplete="name"></div>
+      <div><label for="client">利用者 *</label><input id="client" name="client" required maxlength="100"></div>
+    </div>
+    <label for="category">区分 *</label>
+    <select id="category" name="category" required>
+      <option value="">選択してください</option>
+      <option>通院（通院介助）</option><option>同行（通院介助）</option><option>身体介護</option><option>家事援助</option><option>同行援護</option><option>移動支援</option><option>重度訪問介護</option><option>その他</option>
+    </select>
+    <label>日時（支援予定日） *</label>
+    <p class="help">「日付を追加」で複数の日を指定できます。各日付について1行ずつ登録します（最大50日）。</p>
+    <div id="dateList"><div class="date-entry"><input type="date" required aria-label="支援予定日 1"></div></div>
+    <button type="button" id="addDate">＋ 日付を追加</button>
+    <input type="hidden" name="supportDates" id="supportDates">
+    <div class="two">
+      <div><label for="startTime">開始時刻 *</label><input id="startTime" name="startTime" type="time" required></div>
+      <div><label for="endTime">終了予定（任意）</label><input id="endTime" name="endTime" type="time"></div>
+    </div>
+    <label for="destination">行き先場所</label><input id="destination" name="destination" maxlength="500">
+    <label for="meeting">待合せ場所</label><input id="meeting" name="meeting" maxlength="500">
+    <label for="notes">特記事項</label><textarea id="notes" name="notes" rows="3" maxlength="2000"></textarea>
+    <div class="submit-wrap"><button type="submit" id="submitBtn">まとめて登録する</button></div>
+  </form>
+  <p class="help">登録が完了したかどうかは、別タブの結果をご確認ください。二重送信にご注意ください。</p>
+</main>
+<script>
+  const list = document.getElementById('dateList');
+  document.getElementById('addDate').addEventListener('click', () => {
+    if (list.children.length >= 50) { alert('日付は最大50件です。'); return; }
+    const wrapper = document.createElement('div');
+    wrapper.className = 'date-entry';
+    const inp = document.createElement('input');
+    inp.type = 'date'; inp.required = true; inp.setAttribute('aria-label', '追加の支援予定日');
+    const remove = document.createElement('button');
+    remove.type = 'button'; remove.textContent = '削除';
+    remove.addEventListener('click', () => wrapper.remove());
+    wrapper.append(inp,remove);list.append(wrapper);inp.focus();
+  });
+  document.getElementById('report').addEventListener('submit', function(e) {
+    const dates = [...list.querySelectorAll('input[type=date]')].map(x => x.value);
+    if (dates.some(d=>!d) || new Set(dates).size !== dates.length) {
+      e.preventDefault(); alert('日付の未入力または重複を確認してください。'); return;
+    }
+    document.getElementById('supportDates').value=JSON.stringify(dates);
+    const start=this.elements.startTime.value, end=this.elements.endTime.value;
+    if (end && end <= start) { e.preventDefault(); alert('終了予定は開始時刻より後にしてください。'); return; }
+    if (!confirm(dates.length+'件の日付を登録します。よろしいですか？')) e.preventDefault();
+  });
+</script>
+</body>
+</html>
